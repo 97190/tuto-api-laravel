@@ -2,41 +2,46 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Controllers\Controller;
 use App\Models\Player;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 
 class PlayerController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response 
      */
-    public function index()
-    {
-        // On récupère tous les utilisateurs
-        $players = Player::all();
 
-        // On retourne les informations des utilisateurs en JSON
-        return response()->json($players);
+     // Première methode pour la fonction index
+    // public function index()
+    // {
+    //     // On récupère tous les utilisateurs
+    //     $players = Player::all();
 
-    }
+    //     // On retourne les informations des utilisateurs en JSON
+    //     return response()->json($players);
+
+    // }
 
     // Deuxième methode pour la fonction index
 
-    // public function index()
-// {
+    public function index()
+{
 // On récupère tous les joueurs
-// $players = DB::table('players')
-// ->get()
-// ->toArray();
+$players = DB::table('players') // pour que cela marche bien penser a faire un clic droit 'import all class'
+->join('clubs', 'clubs.id', '=', 'players.club_id')
+->get()
+->toArray();
+
 // On retourne les informations des utilisateurs en JSON
-// return response()->json([
-// 'status' => 'Success',
-// 'data' => $players,
-// ]);
-// }
+return response()->json([
+'status' => 'Success',
+'data' => $players,
+]);
+}
 
     /**
      * Store a newly created resource in storage.
@@ -59,6 +64,7 @@ class PlayerController extends Controller
                 'lastName' => $request->lastName,
                 'height' => $request->height,
                 'position' => $request->position,
+                'club_id' => $request->club_id,
         ]);
         // On retourne les informations du nouvel utilisateur en JSON
             return response()->json([
@@ -94,7 +100,9 @@ class PlayerController extends Controller
             'lastname' => 'required|max:100',
             'height' => 'required|max:100',
             'position' => 'required|max:100',
+            'club_id' => $request->club_id,
             ]);
+            
             // On crée un nouvel utilisateur
             $player->update([
             'firstname' => $request->firstname,
