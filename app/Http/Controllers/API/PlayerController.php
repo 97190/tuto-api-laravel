@@ -15,8 +15,28 @@ class PlayerController extends Controller
      */
     public function index()
     {
-        //
+        // On récupère tous les utilisateurs
+        $players = Player::all();
+
+        // On retourne les informations des utilisateurs en JSON
+        return response()->json($players);
+
     }
+
+    // Deuxième methode pour la fonction index
+
+    // public function index()
+// {
+// On récupère tous les joueurs
+// $players = DB::table('players')
+// ->get()
+// ->toArray();
+// On retourne les informations des utilisateurs en JSON
+// return response()->json([
+// 'status' => 'Success',
+// 'data' => $players,
+// ]);
+// }
 
     /**
      * Store a newly created resource in storage.
@@ -26,7 +46,26 @@ class PlayerController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        {
+            $request->validate([
+                'firstName' => 'required|max:100',
+                'lastName' => 'required|max:100',
+                'height' => 'required|max:100',
+                'position' => 'required|max:100',
+        ]);
+        // On crée un nouvel utilisateur
+            $player = Player::create([
+                'firstName' => $request->firstName,
+                'lastName' => $request->lastName,
+                'height' => $request->height,
+                'position' => $request->position,
+        ]);
+        // On retourne les informations du nouvel utilisateur en JSON
+            return response()->json([
+                'status' => 'Success',
+                'data' => $player,
+        ]);
+        }
     }
 
     /**
@@ -37,7 +76,8 @@ class PlayerController extends Controller
      */
     public function show(Player $player)
     {
-        //
+        // On retourne les informations de l'utilisateur en JSON
+            return response()->json($player);
     }
 
     /**
@@ -49,7 +89,24 @@ class PlayerController extends Controller
      */
     public function update(Request $request, Player $player)
     {
-        //
+        $this->validate($request, [
+            'firstname' => 'required|max:100',
+            'lastname' => 'required|max:100',
+            'height' => 'required|max:100',
+            'position' => 'required|max:100',
+            ]);
+            // On crée un nouvel utilisateur
+            $player->update([
+            'firstname' => $request->firstname,
+            'lastname' => $request->lastname,
+            'height' => $request->height,
+            'lastname' => $request->lastname,
+            'position' => $request->position,
+            ]);
+            // On retourne les informations du nouvel utilisateur en JSON
+            return response()->json([
+            'status' => 'Mise à jour avec succèss']);
+            
     }
 
     /**
@@ -60,6 +117,10 @@ class PlayerController extends Controller
      */
     public function destroy(Player $player)
     {
-        //
+        // On supprime l'utilisateur
+            $player->delete();
+            // On retourne la réponse JSON
+            return response()->json([
+            'status' => 'Supprimer avec succès avec succèss']);
     }
 }
