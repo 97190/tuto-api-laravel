@@ -58,6 +58,26 @@ return response()->json([
                 'height' => 'required|max:100',
                 'position' => 'required|max:100',
         ]);
+
+        $filename = "";
+        if ($request->hasFile('photoPlayer')) {
+
+        // On récupère le nom du fichier avec son extension, résultat $filenameWithExt : "jeanmiche.jpg"
+        $filenameWithExt = $request->file('photoPlayer')->getClientOriginalName();
+        $filenameWithoutExt = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+
+        // On récupère l'extension du fichier, résultat $extension : ".jpg"
+        $extension = $request->file('photoPlayer')->getClientOriginalExtension();
+
+        // On créer un nouveau fichier avec le nom + une date + l'extension, résultat $fileNameToStore :"jeanmiche_20220422.jpg"
+        $filename = $filenameWithoutExt . '_' . time() . '.' . $extension;
+
+        // On enregistre le fichier à la racine /storage/app/public/uploads, ici la méthode storeAs défini déjà le chemin /storage/app
+        $path = $request->file('photoPlayer')->storeAs('public/uploads', $filename);
+    } else {
+        $filename = Null;
+}
+
         // On crée un nouvel utilisateur
             $player = Player::create([
                 'firstName' => $request->firstName,
@@ -65,6 +85,7 @@ return response()->json([
                 'height' => $request->height,
                 'position' => $request->position,
                 'club_id' => $request->club_id,
+                'photoPlayer' => $filename,
         ]);
         // On retourne les informations du nouvel utilisateur en JSON
             return response()->json([
@@ -102,7 +123,7 @@ return response()->json([
             'position' => 'required|max:100',
             'club_id' => $request->club_id,
             ]);
-            
+
             // On crée un nouvel utilisateur
             $player->update([
             'firstname' => $request->firstname,
